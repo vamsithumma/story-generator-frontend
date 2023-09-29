@@ -1,25 +1,29 @@
 import logo from './logo.svg';
 import './App.css';
+import React, { useState } from 'react';
+import Form from './components/Form';
+import GeneratedStory from './components/GeneratedStory';
+import Leaderboard from './components/LeaderBoard';
+import ChatbotApp from './ChatBot';
 
 function App() {
+  const [generatedStory, setGeneratedStory] = useState('');
+  const [currentStoryId, setCurrentStoryId] = useState(null);
+  const [topStories, setTopStories] = useState([]);
+  const handleStoryGenerated = (story, storyId) => {
+    //console.log(story);
+    setCurrentStoryId(storyId);
+    setGeneratedStory(story);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      
+      <Form onStoryGenerated={handleStoryGenerated} />
+      <GeneratedStory story={generatedStory} storyId={currentStoryId}/>
+      <Leaderboard />
     </div>
   );
-}
+};
 
 export default App;
