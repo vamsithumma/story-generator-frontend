@@ -1,9 +1,10 @@
 // src/components/GeneratedStory.js
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
 import * as Icon from 'react-bootstrap-icons';
 import { RWebShare } from "react-web-share";
+import { useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const EnumEmojis =  {
   like:  '❤️',
@@ -14,14 +15,45 @@ const EnumEmojis =  {
   dislike:  '👎',
 };
 
-const GeneratedStory = ({ story, storyId ,storyPrompt }) => {
+const ExtendedStoryGenerator = () => {
+  const { storyId } = useParams();
+  const [story, setStory] = useState([]);
   const [isUpvoted, setIsUpvoted] = useState(false);
-  const [isReacted, setIsReacted] = useState(false);
+  const [isReacted, setIsRecated] = useState(false);
+  const [extendedStories, setExtendedStories] = useState([]);
 
   useEffect(() => {
-    setIsUpvoted(false);
-    setIsReacted(false);
+    extendStory();
+    const exstories = JSON.parse(sessionStorage.getItem('ExtendedStories')) || [];
+    setExtendedStories(exstories);
   }, []);
+
+
+  const extendStory = async () =>{
+    if (extendedStories.includes(storyId)) {
+      alert('You have already Extended this story.');
+      return;
+    }
+    try {
+      const response = await axios.post('http://localhost:3001/api/extendstory', {
+        storyId 
+      });
+      setStory(response.data.story);
+      setExtendedStories((prevExtendedStories) => [...prevExtendedStories, storyId]);
+      sessionStorage.setItem('ExtendedStories', JSON.stringify([...extendedStories, storyId]));
+    } catch (error) {
+      console.error('Error generating story:', error.message);
+    }
+
+  }
+  const fetchStoryById = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3001/api/getStoryById/${storyId}` );
+      setStory(response.data.story);
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error.message);
+    }
+  };
 
   const handleUpvote = async () => {
     if (!isUpvoted) {
@@ -39,22 +71,22 @@ const GeneratedStory = ({ story, storyId ,storyPrompt }) => {
   const handleUpreaction = async(reactiontype) =>{
     if (!isReacted) {
       try {
-        await axios.post('http://localhost:3001/api/addreaction', { storyId ,reactiontype});
+        await axios.post('http://localhost:3001/api/addreaction', { storyId  ,reactiontype });
         //console.log("reacted")
-        setIsReacted(true);
+        setIsRecated(true);
         sessionStorage.setItem('reactedStories', JSON.stringify([storyId]));
       } catch (error) {
         console.error('Error adding reaction to story:', error.message);
       }
     }
 
-  }
+  } 
 
 
 
   
   const handleSave = () => {
-    const blob = new Blob([story], { type: 'text/plain' });
+    const blob = new Blob([story.content], { type: 'text/plain' });
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
     link.download = `story${storyId}.txt`;
@@ -63,34 +95,30 @@ const GeneratedStory = ({ story, storyId ,storyPrompt }) => {
     document.body.removeChild(link);
     console.log('Story saved as a text file!');
   };
-
+  
 
   return (
     <>
-      {story ? (
-          <div className="col-md-12 offset-md-0 border-success border rounded-5 p-4 mt-5 shadow">
-          <p class="fw-bold fst-italic fs-4">{storyPrompt}</p>
-          <p class="fs-5 text-justify">{story}</p>
-          <div>
-            
-          </div>
+        {story.content ? (
+          <div className="container">
+          <div className="col-md-10 offset-md-1 border-success border rounded-5 p-4 mt-5 shadow">
+          <p class="fw-bold fst-italic fs-4">{story.prompt}</p>
+          <p class="fs-5 text-justify">{story.content}</p>
+  
           <button className="btn btn-primary m-2" onClick={handleUpvote} disabled={isUpvoted}>
             {isUpvoted ? 'voted' : 'vote'}
           </button>
           <button className="btn btn-success m-2" onClick={handleSave}>Save as Text <Icon.Download/></button>
           <RWebShare
             data={{
-              text: `${story}`,
+              text: `${story.content}`,
               url: "http://localhost:3000",
-              title: `AI Generated Story for Title: ${storyPrompt}`,
+              title: `AI Generated Story for Title: ${story.prompt}`,
             }}
             onClick={() => console.log("shared successfully!")}
           >
             <button  className="btn btn-dark m-2" ><Icon.Share/> Share</button>
           </RWebShare>
-
-          <Link to={`/extendedStory/${storyId}`} className="btn btn-warning m-2">Extend Story</Link>
-          
 
           <br></br>
 
@@ -104,15 +132,20 @@ const GeneratedStory = ({ story, storyId ,storyPrompt }) => {
                   {isReacted ? (<span style={{ fontSize: '24px', backgroundcolor: 'black'}}>{emoji}</span>): (<span style={{ fontSize: '24px' }}>{emoji}</span>)}
                   
                   </button>
-    
                   </span>
             ))}
-    
-        </div>
-      ):(<p class="fst-italic text-center fs-6 m-1"> Kindly Navigate to LeaderBoard page to view all Generated Stories</p>)}
+            <br></br>
+            <Link className="btn btn-primary my-2" to={-1}>
+              Go Back
+            </Link>
+          </div>
+          
+          </div>
+        ):(<p class="fw-bold fst-italic fs-5 m-2"> Loading....</p>)}
+      
     </>
     
   );
 };
 
-export default GeneratedStory;
+export default ExtendedStoryGenerator;

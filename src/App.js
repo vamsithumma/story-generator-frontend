@@ -1,27 +1,30 @@
 import logo from './logo.svg';
 import './App.css';
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import React, { useState } from 'react';
 import Form from './components/Form';
 import GeneratedStory from './components/GeneratedStory';
 import Leaderboard from './components/LeaderBoard';
-import ChatbotApp from './ChatBot';
+import Navbar from './layouts/Navbar';
+import ExtendedStoryGenerator from './components/ExtendedStoryGenerator';
+import { BrowserRouter as Router, Route,Routes,   Link , useNavigate, Navigate} from 'react-router-dom';
 
 function App() {
-  const [generatedStory, setGeneratedStory] = useState('');
-  const [currentStoryId, setCurrentStoryId] = useState(null);
-  const [topStories, setTopStories] = useState([]);
-  const handleStoryGenerated = (story, storyId) => {
-    //console.log(story);
-    setCurrentStoryId(storyId);
-    setGeneratedStory(story);
-  };
-
+ 
   return (
     <div>
+       <Router>
+        <Navbar />
+        <Routes>
+              <Route  path="/" element={<Form />} /> 
+              <Route  path="/leaderBoard" element={<Leaderboard /> } /> 
+              <Route path="/extendedStory/:storyId" element={<ExtendedStoryGenerator/>}/>
+                       
+        </Routes>
+      </Router> 
       
-      <Form onStoryGenerated={handleStoryGenerated} />
-      <GeneratedStory story={generatedStory} storyId={currentStoryId}/>
-      <Leaderboard />
+      
+      
     </div>
   );
 };
