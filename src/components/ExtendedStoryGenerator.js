@@ -5,6 +5,7 @@ import * as Icon from 'react-bootstrap-icons';
 import { RWebShare } from "react-web-share";
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { BASE_URL } from '../url';
 
 const EnumEmojis =  {
   like:  '❤️',
@@ -35,7 +36,7 @@ const ExtendedStoryGenerator = () => {
       return;
     }
     try {
-      const response = await axios.post('http://localhost:3001/api/extendstory', {
+      const response = await axios.post(`${BASE_URL}/api/extendstory`, {
         storyId 
       });
       setStory(response.data.story);
@@ -48,7 +49,7 @@ const ExtendedStoryGenerator = () => {
   }
   const fetchStoryById = async () => {
     try {
-      const response = await axios.get(`http://localhost:3001/api/getStoryById/${storyId}` );
+      const response = await axios.get(`${BASE_URL}/api/getStoryById/${storyId}` );
       setStory(response.data.story);
     } catch (error) {
       console.error('Error fetching leaderboard:', error.message);
@@ -58,7 +59,7 @@ const ExtendedStoryGenerator = () => {
   const handleUpvote = async () => {
     if (!isUpvoted) {
       try {
-        await axios.post('http://localhost:3001/api/upvote', { storyId });
+        await axios.post(`${BASE_URL}/api/upvote`, { storyId });
         //console.log("voted")
         setIsUpvoted(true);
         sessionStorage.setItem('votedStories', JSON.stringify([storyId]));
@@ -71,7 +72,7 @@ const ExtendedStoryGenerator = () => {
   const handleUpreaction = async(reactiontype) =>{
     if (!isReacted) {
       try {
-        await axios.post('http://localhost:3001/api/addreaction', { storyId  ,reactiontype });
+        await axios.post(`${BASE_URL}/api/addreaction`, { storyId  ,reactiontype });
         //console.log("reacted")
         setIsRecated(true);
         sessionStorage.setItem('reactedStories', JSON.stringify([storyId]));

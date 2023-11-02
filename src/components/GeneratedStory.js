@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import * as Icon from 'react-bootstrap-icons';
 import { RWebShare } from "react-web-share";
+import { BASE_URL } from '../url';
 
 const EnumEmojis =  {
   like:  '❤️',
@@ -26,7 +27,7 @@ const GeneratedStory = ({ story, storyId ,storyPrompt }) => {
   const handleUpvote = async () => {
     if (!isUpvoted) {
       try {
-        await axios.post('http://localhost:3001/api/upvote', { storyId });
+        await axios.post(`${BASE_URL}/api/upvote`, { storyId });
         //console.log("voted")
         setIsUpvoted(true);
         sessionStorage.setItem('votedStories', JSON.stringify([storyId]));
@@ -39,7 +40,7 @@ const GeneratedStory = ({ story, storyId ,storyPrompt }) => {
   const handleUpreaction = async(reactiontype) =>{
     if (!isReacted) {
       try {
-        await axios.post('http://localhost:3001/api/addreaction', { storyId ,reactiontype});
+        await axios.post(`${BASE_URL}/api/addreaction`, { storyId ,reactiontype});
         //console.log("reacted")
         setIsReacted(true);
         sessionStorage.setItem('reactedStories', JSON.stringify([storyId]));
@@ -81,7 +82,7 @@ const GeneratedStory = ({ story, storyId ,storyPrompt }) => {
           <RWebShare
             data={{
               text: `${story}`,
-              url: "http://localhost:3000",
+              url: BASE_URL,
               title: `AI Generated Story for Title: ${storyPrompt}`,
             }}
             onClick={() => console.log("shared successfully!")}

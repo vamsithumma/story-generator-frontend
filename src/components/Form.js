@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import GeneratedStory from './GeneratedStory';
+import { BASE_URL } from '../url';
 
 const Form = () => {
   const [prompt, setPrompt] = useState('');
@@ -25,7 +26,7 @@ const Form = () => {
     e.preventDefault();
     if(prompt!=""){
       try {
-        const response = await axios.post('http://localhost:3001/api/generate', {
+        const response = await axios.post(`${BASE_URL}/api/generate`, {
           prompt, genre , words
         });
         setSendPrompt(prompt);

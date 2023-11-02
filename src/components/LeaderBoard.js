@@ -4,6 +4,7 @@ import axios from 'axios';
 import { RWebShare } from "react-web-share";
 import * as Icon from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
+import { BASE_URL } from '../url';
 
 const EnumEmojis =  {
   like:  '❤️',
@@ -30,7 +31,7 @@ const Leaderboard = () => {
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/leaderboard');
+      const response = await axios.get(`${BASE_URL}/api/leaderboard`);
       setTopStories(response.data.topStories);
     } catch (error) {
       console.error('Error fetching leaderboard:', error.message);
@@ -40,7 +41,7 @@ const Leaderboard = () => {
 
   const handleDownreaction = async (storyId,reactiontype) => {
     try {
-      await axios.post('http://localhost:3001/api/downvote', { storyId,reactiontype });
+      await axios.post(`${BASE_URL}/api/downvote`, { storyId,reactiontype });
       console.log(topStories);
       setTopStories((prevStories) =>
         prevStories.map((story) =>
@@ -65,7 +66,7 @@ const Leaderboard = () => {
     }
     try {
 
-      await axios.post('http://localhost:3001/api/addreaction', { storyId,reactiontype });
+      await axios.post(`${BASE_URL}/api/addreaction`, { storyId,reactiontype });
       console.log(topStories);
       setTopStories((prevStories) =>
         prevStories.map((story) =>
@@ -89,7 +90,7 @@ const Leaderboard = () => {
 
     try {
       // Call the upvote API
-      await axios.post('http://localhost:3001/api/upvote', { storyId });
+      await axios.post(`${BASE_URL}/api/upvote`, { storyId });
 
       // Update the local state and localStorage
       setTopStories((prevStories) =>
@@ -152,7 +153,7 @@ const Leaderboard = () => {
                 <RWebShare
                   data={{
                     text: `${story.content}`,
-                    url: "http://localhost:3000",
+                    url: BASE_URL,
                     title: `AI Generated Story for Title: ${story.prompt}`,
                   }}
                   onClick={() => console.log("shared successfully!")}
