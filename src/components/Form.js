@@ -43,7 +43,7 @@ const Form = () => {
 
   return (
     <div className="container">
-      <div className="col-md-10 offset-md-1 border border-success rounded p-4 mt-5 shadow border rounded-5">
+      <div className="col-md-10 offset-md-1 border-success border rounded-5 p-4 mt-5 shadow ">
         <form onSubmit={handleSubmit}>
         <div className="m-3">
           <h3 className="fw-bold fst-italic text-center m-4 fs-2">Story Prompt</h3>
@@ -59,7 +59,7 @@ const Form = () => {
             </div> 
             </div>
           </form>    
-          <div class="d-flex justify-content-center">  
+          <div >  
             <label  class="fw-bold fst-italic fs-5 m-2">No of Words : {words}</label>  
               <input
                 type="range"
